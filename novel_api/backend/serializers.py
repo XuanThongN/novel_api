@@ -6,7 +6,7 @@ from .models import Category, Novel, Chapter, Comment
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['url', 'username', 'email', 'groups']
+        fields = ['url', 'id', 'username', 'email', 'groups']
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
@@ -31,16 +31,25 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
 # Novel
 class NovelSerializer(serializers.HyperlinkedModelSerializer):
     category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
+    chapters = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='chapter-detail')
 
     class Meta:
         model = Novel
-        fields = ['url', 'id', 'title', 'author', 'category']
+        fields = ['url', 'id', 'title', 'author', 'category', 'chapters', 'comments']
 
     # Kiểm tra tên novel đã tồn tại chưa
     def validate_title(self, value):
         if Novel.objects.filter(title=value).exists():
             raise serializers.ValidationError("Novel này đã tồn tại trên hệ thống.")
         return value
+
+    # Lấy tất cả các chapter của novel
+    def get_chapters(self, obj):
+        return obj.chapters.all()
+
+    # Lấy tất cả các comment của novel (chỉ lấy comment của novel đó)
+    def get_comments(self, obj):
+        return obj.comments.filter(novel_id=obj.id)
 
 
 # Chapter
@@ -50,6 +59,12 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Chapter
         fields = ['url', 'id', 'title', 'content', 'novel']
+
+    # Kiểm tra tên chapter đã tồn tại chưa
+    def validate_title(self, value):
+        if Chapter.objects.filter(title=value).exists():
+            raise serializers.ValidationError("Chapter này đã tồn tại trên hệ thống.")
+        return value
 
 
 #  Comment
