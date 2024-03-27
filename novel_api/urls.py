@@ -1,25 +1,20 @@
-"""
-URL configuration for novel_api project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.0/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path
 from django.urls import include, path
 from rest_framework import routers
 
 from novel_api.backend import views
+from django.urls import path
+from .backend.views import (
+    NovelListCreate,
+    NovelRetrieveUpdateDestroy,
+    ChapterListCreate,
+    ChapterRetrieveUpdateDestroy,
+    CommentListCreate,
+    CommentRetrieveUpdateDestroy,
+    CategoryListCreate,
+    CategoryRetrieveUpdateDestroy,
+)
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
@@ -31,4 +26,12 @@ urlpatterns = [
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('admin/', admin.site.urls),
+    path('novels/', NovelListCreate.as_view(), name='novel-list-create'),
+    path('novels/<int:pk>/', NovelRetrieveUpdateDestroy.as_view(), name='novel-retrieve-update-destroy'),
+    path('chapters/', ChapterListCreate.as_view(), name='chapter-list-create'),
+    path('chapters/<int:pk>/', ChapterRetrieveUpdateDestroy.as_view(), name='chapter-retrieve-update-destroy'),
+    path('comments/', CommentListCreate.as_view(), name='comment-list-create'),
+    path('comments/<int:pk>/', CommentRetrieveUpdateDestroy.as_view(), name='comment-retrieve-update-destroy'),
+    path('categories/', CategoryListCreate.as_view(), name='category-list-create'),
+    path('categories/<int:pk>/', CategoryRetrieveUpdateDestroy.as_view(), name='category-retrieve-update-destroy'),
 ]
