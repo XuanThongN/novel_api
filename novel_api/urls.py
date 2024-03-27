@@ -7,6 +7,7 @@ from rest_framework import routers
 from django.urls import path
 from rest_framework.authtoken.views import obtain_auth_token
 
+from novel_api.authenticate import CustomAuthToken, UserRegistrationAPIView
 from novel_api.backend.views import UserViewSet, GroupViewSet, NovelViewSet, ChapterViewSet, CommentViewSet, \
     CategoryViewSet
 
@@ -22,7 +23,9 @@ router.register(r'categories', CategoryViewSet, basename='category')
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('', include(router.urls)),
-    path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
-    # path('api-auth/', include('rest_framework.urls', namespace='rest_framework')), //Tắt chức năng login
+    # path('api-token-auth/', obtain_auth_token, name='api_token_auth'), # Hàm xác thực mặc định của rest framework
+    # path('api-auth/', include('rest_framework.urls', namespace='rest_framework')), //Tắt chức năng login ở trang test api
     path('admin/', admin.site.urls),
+    path('api-token-auth', CustomAuthToken.as_view(), name='api_token_auth'),  # Custom hàm xác thực để dành cho login
+    path('register', UserRegistrationAPIView.as_view(), name='user_registration'),  # Đăng ký tài khoản
 ]
