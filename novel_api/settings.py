@@ -9,20 +9,78 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-
+import os
 from pathlib import Path
+
+from _socket import gethostname, gethostbyname
+
+from backend import load_env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
+# Load Secrets
+load_env.load_env()
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-%in_z7-gqc=a+6=^2a(=(c24zrinj9!gy8!jf!3zr2a+4l7nm5'
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "True").lower() == "true"
+ENVIRONMENT = os.environ.get("ENVIRONMENT")
+
+if ENVIRONMENT in ["Production", "Staging", "Test"]:
+    ALLOWED_HOSTS = [
+        gethostname(),
+        gethostbyname(gethostname()),
+        os.environ.get("HTTPS_URL_1"),
+        os.environ.get("HTTPS_URL_2")
+    ]
+
+    CORS_ALLOWED_ORIGINS = [
+        os.environ.get("HTTPS_APP_URL_1"),
+        os.environ.get("HTTPS_APP_URL_2"),
+    ]
+
+    CSRF_TRUSTED_ORIGINS = [
+        os.environ.get("HTTPS_APP_URL_1"),
+        os.environ.get("HTTPS_APP_URL_2")
+    ]
+
+elif ENVIRONMENT == "Development":
+    ALLOWED_HOSTS = [
+        gethostname(),
+        gethostbyname(gethostname()),
+        os.environ.get("HTTPS_URL_1"),
+        os.environ.get("HTTPS_URL_2")
+    ]
+
+    CORS_ALLOWED_ORIGINS = [
+        os.environ.get("HTTPS_APP_URL_1"),
+        os.environ.get("HTTPS_APP_URL_2"),
+        "http://localhost:3000"
+    ]
+
+    CSRF_TRUSTED_ORIGINS = [
+        os.environ.get("HTTPS_APP_URL_1"),
+        os.environ.get("HTTPS_APP_URL_2"),
+        "http://localhost:3000"
+    ]
+
+else:
+    ALLOWED_HOSTS = ["127.0.0.1"]
+
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:3000",
+        "http://localhost:3001",
+    ]
+
+    CSRF_TRUSTED_ORIGINS = [
+        "http://localhost:3000",
+        "http://localhost:3001",
+    ]
 
 # Bỏ dấu / cuối mỗi url
 APPEND_SLASH = False

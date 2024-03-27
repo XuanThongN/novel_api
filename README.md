@@ -22,5 +22,5 @@ Create a novel api in Django Framework
 
 `django-admin startproject novel_api .`<br>
 `cd novel_api`<br>
-`django-admin startapp quickstart`<br>
+`django-admin startapp backend`<br>
 `cd ..`
