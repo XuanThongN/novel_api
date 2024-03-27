@@ -39,3 +39,4 @@ class CommentService(BaseService):
 class CategoryService(BaseService):
     def __init__(self):
         super().__init__(CategoryRepository())
+

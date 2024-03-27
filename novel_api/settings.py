@@ -24,6 +24,9 @@ SECRET_KEY = 'django-insecure-%in_z7-gqc=a+6=^2a(=(c24zrinj9!gy8!jf!3zr2a+4l7nm5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Bỏ dấu / cuối mỗi url
+APPEND_SLASH = False
+
 ALLOWED_HOSTS = []
 
 # Application definition
@@ -37,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'novel_api',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
