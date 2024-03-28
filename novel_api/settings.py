@@ -29,60 +29,30 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "True").lower() == "true"
-ENVIRONMENT = os.environ.get("ENVIRONMENT")
 
-if ENVIRONMENT in ["Production", "Staging", "Test"]:
-    ALLOWED_HOSTS = [
-        gethostname(),
-        gethostbyname(gethostname()),
-        os.environ.get("HTTPS_URL_1"),
-        os.environ.get("HTTPS_URL_2")
-    ]
+# Cấu hình mặc định - áp dụng cho cả development và production
+ALLOWED_HOSTS = [
+    gethostname(),
+    gethostbyname(gethostname()),
+    # Thêm các URL cho phép truy cập API ở đây (bắt đầu với https://)
+    os.environ.get("HTTPS_URL_1"),
+    os.environ.get("HTTPS_URL_2"),
+]
 
+# Cấu hình CORS chỉ cho development
+if DEBUG:
     CORS_ALLOWED_ORIGINS = [
         os.environ.get("HTTPS_APP_URL_1"),
         os.environ.get("HTTPS_APP_URL_2"),
+        "http://localhost:3000"  # Cho phép truy cập từ localhost:3000 trong development
     ]
-
-    CSRF_TRUSTED_ORIGINS = [
-        os.environ.get("HTTPS_APP_URL_1"),
-        os.environ.get("HTTPS_APP_URL_2")
-    ]
-
-elif ENVIRONMENT == "Development":
-    ALLOWED_HOSTS = [
-        gethostname(),
-        gethostbyname(gethostname()),
-        os.environ.get("HTTPS_URL_1"),
-        os.environ.get("HTTPS_URL_2")
-    ]
-
-    CORS_ALLOWED_ORIGINS = [
-        os.environ.get("HTTPS_APP_URL_1"),
-        os.environ.get("HTTPS_APP_URL_2"),
-        "http://localhost:3000"
-    ]
-
-    CSRF_TRUSTED_ORIGINS = [
-        os.environ.get("HTTPS_APP_URL_1"),
-        os.environ.get("HTTPS_APP_URL_2"),
-        "http://localhost:3000"
-    ]
-
+    CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 else:
-    ALLOWED_HOSTS = ["127.0.0.1", "https://novel-api-3bzt.onrender.com"]
-
     CORS_ALLOWED_ORIGINS = [
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "https://novel-api-3bzt.onrender.com"
+        os.environ.get("HTTPS_APP_URL_1"),
+        os.environ.get("HTTPS_APP_URL_2"),
     ]
-
-    CSRF_TRUSTED_ORIGINS = [
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "https://novel-api-3bzt.onrender.com"
-    ]
+    CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 
 # Bỏ dấu / cuối mỗi url
 APPEND_SLASH = False
