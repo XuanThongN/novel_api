@@ -70,22 +70,22 @@ elif ENVIRONMENT == "Development":
     ]
 
 else:
-    ALLOWED_HOSTS = ["127.0.0.1"]
+    ALLOWED_HOSTS = ["127.0.0.1", "https://novel-api-3bzt.onrender.com"]
 
     CORS_ALLOWED_ORIGINS = [
         "http://localhost:3000",
         "http://localhost:3001",
+        "https://novel-api-3bzt.onrender.com"
     ]
 
     CSRF_TRUSTED_ORIGINS = [
         "http://localhost:3000",
         "http://localhost:3001",
+        "https://novel-api-3bzt.onrender.com"
     ]
 
 # Bỏ dấu / cuối mỗi url
 APPEND_SLASH = False
-
-ALLOWED_HOSTS = ["https://novel-api-3bzt.onrender.com"]
 
 # Application definition
 
