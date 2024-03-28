@@ -85,7 +85,7 @@ else:
 # Bỏ dấu / cuối mỗi url
 APPEND_SLASH = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["https://novel-api-3bzt.onrender.com"]
 
 # Application definition
 
