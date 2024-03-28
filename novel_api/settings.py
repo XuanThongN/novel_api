@@ -14,7 +14,7 @@ from pathlib import Path
 
 from _socket import gethostname, gethostbyname
 
-from backend import load_env
+from novel_api import load_env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent

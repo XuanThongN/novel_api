@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 def load_env():
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-    load_dotenv(os.path.join('.', '.env'))
+    load_dotenv(os.path.join('backend', '.env'))
 
     # Load Secrets
 
