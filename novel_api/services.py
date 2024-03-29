@@ -50,8 +50,8 @@ class CategoryService(BaseService):
 
 
 class ImgurService:
-    env_path = Path('..') / '.env'
-    load_dotenv(dotenv_path=env_path)
+    # env_path = Path('..') / '.env'
+    # load_dotenv(dotenv_path=env_path)
 
     def __init__(self):
         self.client_id = os.environ.get('IMGUR_CLIENT_ID')
@@ -63,7 +63,7 @@ class ImgurService:
             client_id=self.client_id,
             client_secret=self.client_secret
         )
-        # Đọc dữ liệu của tệp tin
+        # Upload ảnh lên imgur
         image = client.upload_from_path(file_data)
         if image['link']:
             return image['link']
