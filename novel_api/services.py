@@ -1,4 +1,12 @@
+import io
+import os
+from pathlib import Path
+
+import imgurpython
+from dotenv import load_dotenv
+
 from .repositories import NovelRepository, ChapterRepository, CommentRepository, CategoryRepository
+import requests
 
 
 class BaseService:
@@ -40,3 +48,25 @@ class CategoryService(BaseService):
     def __init__(self):
         super().__init__(CategoryRepository())
 
+
+class ImgurService:
+    env_path = Path('..') / '.env'
+    load_dotenv(dotenv_path=env_path)
+
+    def __init__(self):
+        self.client_id = os.environ.get('IMGUR_CLIENT_ID')
+        self.client_secret = os.environ.get('IMGUR_CLIENT_SECRET')
+        self.url = 'https://api.imgur.com/3/image'
+
+    def upload_image(self, file_data):
+        client = imgurpython.ImgurClient(
+            client_id=self.client_id,
+            client_secret=self.client_secret
+        )
+        # Đọc dữ liệu của tệp tin
+        image = client.upload_from_path(file_data)
+        if image['link']:
+            return image['link']
+        else:
+            print("Lỗi upload ảnh")
+            return None

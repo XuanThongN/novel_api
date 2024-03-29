@@ -1,3 +1,6 @@
+import os
+from pathlib import Path
+
 from django.contrib.auth.models import User, Group
 from django.shortcuts import redirect
 from rest_framework import viewsets, permissions, generics, routers
@@ -8,7 +11,7 @@ from novel_api.backend.serializers import (GroupSerializer, UserSerializer,
                                            NovelSerializer, ChapterSerializer,
                                            CommentSerializer, CategorySerializer)
 from novel_api.services import (NovelService, ChapterService, CommentService,
-                                CategoryService)
+                                CategoryService, ImgurService)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -46,6 +49,20 @@ class BaseViewSet(viewsets.ModelViewSet):
 class NovelViewSet(BaseViewSet):
     service_class = NovelService
     serializer_class = NovelSerializer
+
+    def perform_create(self, serializer):
+        novel = serializer.save()
+        image_data = self.request.FILES.get('image_path')
+        if image_data:
+            imgur_service = ImgurService()
+            file_data = Path('.') / 'novel_images' / image_data.name
+            image_url = imgur_service.upload_image(file_data)
+            if image_url:
+                novel.image_url = image_url
+                novel.image_path = None
+                novel.save()
+                #  xoá file với đường dẫn file_data
+                os.remove(file_data)
 
 
 class ChapterViewSet(BaseViewSet):
