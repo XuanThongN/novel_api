@@ -12,6 +12,9 @@ class Category(models.Model):
 class Novel(models.Model):
     title = models.CharField(max_length=200)
     author = models.CharField(max_length=100)
+    description = models.TextField(default='No description provided.')
+    image_path = models.ImageField(upload_to='novel_images/', blank=True)  # Thêm trường image_path
+    image_url = models.URLField(max_length=200, blank=True)  # Thêm trường image_url
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='novels')
 
     def __str__(self):

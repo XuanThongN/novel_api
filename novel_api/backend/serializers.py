@@ -35,7 +35,7 @@ class NovelSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Novel
-        fields = ['url', 'id', 'title', 'author', 'category', 'chapters', 'comments']
+        fields = ['url', 'id', 'title', 'author', 'image_path', 'category', 'chapters', 'comments', 'image_url']
 
     # Kiểm tra tên novel đã tồn tại chưa
     def validate_title(self, value):
