@@ -31,8 +31,8 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
 
 # Novel
 class NovelSerializer(serializers.HyperlinkedModelSerializer):
-    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
-    chapters = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='chapter-detail')
+    category = CategorySerializer()
+    chapters = serializers.SerializerMethodField()
 
     class Meta:
         model = Novel
@@ -72,7 +72,7 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
 
 #  Comment
 class CommentSerializer(serializers.HyperlinkedModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    user = UserSerializer(read_only=True)
     novel = serializers.PrimaryKeyRelatedField(queryset=Novel.objects.all())
 
     class Meta:
