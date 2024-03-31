@@ -4,11 +4,13 @@ from pathlib import Path
 from django.contrib.auth.models import User, Group
 from django.shortcuts import redirect
 from rest_framework import viewsets, permissions, generics, routers, status
+from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from novel_api.backend import serializers
+from novel_api.backend.models import Category
 from novel_api.backend.serializers import (GroupSerializer, UserSerializer,
                                            NovelSerializer, ChapterSerializer,
                                            CommentSerializer, CategorySerializer)
@@ -73,10 +75,29 @@ class NovelViewSet(BaseViewSet):
                 #  xoá file với đường dẫn file_data
                 os.remove(file_data)
 
+    @action(detail=False, methods=['get'])
+    def get_novel_with_category(self, request):
+        category_id = request.query_params.get('category_id', None)
+        if category_id is not None:
+            category = Category.objects.get(id=category_id)
+            novels = self.service_class().get_novel_with_category(category)
+            return Response(self.serializer_class(novels, many=True, context={'request': request}).data)
+        else:
+            return Response({"error": "category_id parameter is required"}, status=400)
+
 
 class ChapterViewSet(BaseViewSet):
     service_class = ChapterService
     serializer_class = ChapterSerializer
+
+    @action(detail=False, methods=['get'])
+    def get_chapters_by_novel_id(self, request):
+        novel_id = request.query_params.get('novel_id', None)
+        if novel_id is not None:
+            chapters = self.service_class().get_chapters_by_novel_id(novel_id)
+            return Response(self.serializer_class(chapters, many=True, context={'request': request}).data)
+        else:
+            return Response({"error": "novel_id parameter is required"}, status=400)
 
 
 class CommentViewSet(BaseViewSet):
@@ -95,6 +116,15 @@ class CommentViewSet(BaseViewSet):
             }, status=status.HTTP_201_CREATED)
         else:
             raise ValidationError("Bình luận chứa nội dung độc hại hoặc liên quan đến chính trị.")
+
+    @action(detail=False, methods=['get'])
+    def get_comments_by_novel_id(self, request):
+        novel_id = request.query_params.get('novel_id', None)
+        if novel_id is not None:
+            comments = self.service_class().get_comments_by_novel_id(novel_id)
+            return Response(self.serializer_class(comments, many=True, context={'request': request}).data)
+        else:
+            return Response({"error": "novel_id parameter is required"}, status=400)
 
 
 class CategoryViewSet(BaseViewSet):
