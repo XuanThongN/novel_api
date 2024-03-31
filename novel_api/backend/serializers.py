@@ -77,7 +77,7 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ['url', 'id', 'text', 'user', 'novel']
+        fields = ['url', 'id', 'text', 'user', 'novel', 'created_at']
 
     def create(self, validated_data):
         # Create and return a new Comment instance
