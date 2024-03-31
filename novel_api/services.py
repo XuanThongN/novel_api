@@ -6,6 +6,7 @@ import imgurpython
 from dotenv import load_dotenv
 
 from .backend.ml_model import ToxicCommentClassifier
+from .backend.models import Novel, Chapter, Comment
 from .repositories import NovelRepository, ChapterRepository, CommentRepository, CategoryRepository
 import requests
 
@@ -34,10 +35,16 @@ class NovelService(BaseService):
     def __init__(self):
         super().__init__(NovelRepository())
 
+    def get_novel_with_category(self, category_id):
+        return Novel.objects.filter(category_id=category_id)
+
 
 class ChapterService(BaseService):
     def __init__(self):
         super().__init__(ChapterRepository())
+
+    def get_chapters_by_novel_id(self, novel_id):
+        return Chapter.objects.filter(novel_id=novel_id)
 
 
 class CommentService(BaseService):
@@ -47,6 +54,9 @@ class CommentService(BaseService):
 
     def predict_toxicity(self, comment_text):
         return self.classifier.predict(comment_text)
+
+    def get_comments_by_novel_id(self, novel_id):
+        return Comment.objects.filter(novel_id=novel_id)
 
 
 class CategoryService(BaseService):
