@@ -80,8 +80,10 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['url', 'id', 'text', 'user', 'novel', 'created_at']
 
     def create(self, validated_data):
-        # Create and return a new Comment instance
-        return Comment.objects.create(**validated_data)
+        # Get the user from the request
+        user = self.context['request'].user
+        # Create and return a new Comment instance, associating it with the user
+        return Comment.objects.create(user=user, **validated_data)
 
 
 # Đăng nhập
