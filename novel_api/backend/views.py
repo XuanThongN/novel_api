@@ -54,17 +54,24 @@ class NovelViewSet(BaseViewSet):
 
     def perform_create(self, serializer):
         novel = serializer.save()
+        self.upload_image(novel)
+
+    def perform_update(self, serializer):
+        novel = serializer.save()
+        self.upload_image(novel)
+
+    def upload_image(self, novel):
         image_data = self.request.FILES.get('image_path')
         if image_data:
             imgur_service = ImgurService()
-            file_data = Path('.') / 'photos' / image_data.name
+            file_data = Path('.') / 'novel_images' / image_data.name
             image_url = imgur_service.upload_image(file_data)
             if image_url:
                 novel.image_url = image_url
                 novel.image_path = None
                 novel.save()
                 #  xoá file với đường dẫn file_data
-                # os.remove(file_data)
+                os.remove(file_data)
 
 
 class ChapterViewSet(BaseViewSet):
