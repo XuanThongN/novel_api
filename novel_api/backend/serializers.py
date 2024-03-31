@@ -23,9 +23,10 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
 
     # Kiểm tra tên category đã tồn tại chưa
     def validate_name(self, value):
-        if Category.objects.filter(name=value).exists():
-            raise serializers.ValidationError("Category này đã tồn tại trên hệ thống.")
-        return value
+        if self.instance is None:  # Kiểm tra xem có phải là tạo mới hay không
+            if Category.objects.filter(name=value).exists():
+                raise serializers.ValidationError("Category này đã tồn tại trên hệ thống.")
+            return value
 
 
 # Novel
@@ -39,8 +40,9 @@ class NovelSerializer(serializers.HyperlinkedModelSerializer):
 
     # Kiểm tra tên novel đã tồn tại chưa
     def validate_title(self, value):
-        if Novel.objects.filter(title=value).exists():
-            raise serializers.ValidationError("Novel này đã tồn tại trên hệ thống.")
+        if self.instance is None:  # Kiểm tra xem có phải là tạo mới hay không
+            if Novel.objects.filter(title=value).exists():
+                raise serializers.ValidationError("Novel này đã tồn tại trên hệ thống.")
         return value
 
     # Lấy tất cả các chapter của novel
@@ -62,9 +64,10 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
 
     # Kiểm tra tên chapter đã tồn tại chưa
     def validate_title(self, value):
-        if Chapter.objects.filter(title=value).exists():
-            raise serializers.ValidationError("Chapter này đã tồn tại trên hệ thống.")
-        return value
+        if self.instance is None:  # Kiểm tra xem có phải là tạo mới hay không
+            if Chapter.objects.filter(title=value).exists():
+                raise serializers.ValidationError("Chapter này đã tồn tại trên hệ thống.")
+            return value
 
 
 #  Comment
@@ -75,6 +78,10 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Comment
         fields = ['url', 'id', 'text', 'user', 'novel']
+
+    def create(self, validated_data):
+        # Create and return a new Comment instance
+        return Comment.objects.create(**validated_data)
 
 
 # Đăng nhập
@@ -94,14 +101,16 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     # Kiểm tra username và email đã tồn tại chưa
     def validate_username(self, value):
-        if User.objects.filter(username=value).exists():
-            raise serializers.ValidationError("Username này đã tồn tại trên hệ thống.")
-        return value
+        if self.instance is None:  # Kiểm tra xem có phải là tạo mới hay không
+            if User.objects.filter(username=value).exists():
+                raise serializers.ValidationError("Username này đã tồn tại trên hệ thống.")
+            return value
 
     def validate_email(self, value):
-        if User.objects.filter(email=value).exists():
-            raise serializers.ValidationError("Email này đã tồn tại trên hệ thống.")
-        return value
+        if self.instance is None:  # Kiểm tra xem có phải là tạo mới hay không
+            if User.objects.filter(email=value).exists():
+                raise serializers.ValidationError("Email này đã tồn tại trên hệ thống.")
+            return value
 
     # Tạo tài khoản
     def create(self, validated_data):
