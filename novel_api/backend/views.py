@@ -3,10 +3,12 @@ from pathlib import Path
 
 from django.contrib.auth.models import User, Group
 from django.shortcuts import redirect
-from rest_framework import viewsets, permissions, generics, routers
+from rest_framework import viewsets, permissions, generics, routers, status
+from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from novel_api.backend.models import Novel, Chapter, Comment, Category
+from novel_api.backend import serializers
 from novel_api.backend.serializers import (GroupSerializer, UserSerializer,
                                            NovelSerializer, ChapterSerializer,
                                            CommentSerializer, CategorySerializer)
@@ -55,14 +57,14 @@ class NovelViewSet(BaseViewSet):
         image_data = self.request.FILES.get('image_path')
         if image_data:
             imgur_service = ImgurService()
-            file_data = Path('.') / 'novel_images' / image_data.name
+            file_data = Path('.') / 'photos' / image_data.name
             image_url = imgur_service.upload_image(file_data)
             if image_url:
                 novel.image_url = image_url
                 novel.image_path = None
                 novel.save()
                 #  xoá file với đường dẫn file_data
-                os.remove(file_data)
+                # os.remove(file_data)
 
 
 class ChapterViewSet(BaseViewSet):
@@ -73,6 +75,19 @@ class ChapterViewSet(BaseViewSet):
 class CommentViewSet(BaseViewSet):
     service_class = CommentService
     serializer_class = CommentSerializer
+
+    def perform_create(self, serializer):
+        comment_text = self.request.data['text']
+        is_toxic = self.service_class().predict_toxicity(comment_text)
+        if not is_toxic:
+            serializer.save()
+            return Response({
+                'success': True,
+                'message': 'Bình luận đã được lưu thành công.',
+                'data': serializer.data
+            }, status=status.HTTP_201_CREATED)
+        else:
+            raise ValidationError("Bình luận chứa nội dung độc hại hoặc liên quan đến chính trị.")
 
 
 class CategoryViewSet(BaseViewSet):

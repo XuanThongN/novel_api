@@ -5,6 +5,7 @@ from pathlib import Path
 import imgurpython
 from dotenv import load_dotenv
 
+from .backend.ml_model import ToxicCommentClassifier
 from .repositories import NovelRepository, ChapterRepository, CommentRepository, CategoryRepository
 import requests
 
@@ -42,6 +43,10 @@ class ChapterService(BaseService):
 class CommentService(BaseService):
     def __init__(self):
         super().__init__(CommentRepository())
+        self.classifier = ToxicCommentClassifier()
+
+    def predict_toxicity(self, comment_text):
+        return self.classifier.predict(comment_text)
 
 
 class CategoryService(BaseService):
