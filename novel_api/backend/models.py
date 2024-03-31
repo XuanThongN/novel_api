@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 
 class Category(models.Model):
@@ -34,7 +35,7 @@ class Comment(models.Model):
     text = models.TextField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     novel = models.ForeignKey(Novel, on_delete=models.CASCADE, related_name='comments')
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.text
