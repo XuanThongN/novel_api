@@ -35,6 +35,6 @@ urlpatterns = [
     path('comments', CommentViewSet.as_view({'post': 'create'}), name='comment_create'),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += staticfiles_urlpatterns()
+# if settings.DEBUG:
+#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+#     urlpatterns += staticfiles_urlpatterns()
