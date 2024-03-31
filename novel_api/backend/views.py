@@ -54,6 +54,13 @@ class NovelViewSet(BaseViewSet):
 
     def perform_create(self, serializer):
         novel = serializer.save()
+        self.upload_image(novel)
+
+    def perform_update(self, serializer):
+        novel = serializer.save()
+        self.upload_image(novel)
+
+    def upload_image(self, novel):
         image_data = self.request.FILES.get('image_path')
         if image_data:
             imgur_service = ImgurService()
