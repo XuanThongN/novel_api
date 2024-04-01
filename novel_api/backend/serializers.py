@@ -32,11 +32,12 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
 # Novel
 class NovelSerializer(serializers.HyperlinkedModelSerializer):
     category = CategorySerializer()
-    chapters = serializers.SerializerMethodField()
+
+    # chapters = serializers.SerializerMethodField()
 
     class Meta:
         model = Novel
-        fields = ['url', 'id', 'title', 'author', 'image_path', 'category', 'chapters', 'comments', 'image_url']
+        fields = ['url', 'id', 'title', 'author', 'image_path', 'category', 'description', 'image_url']
 
     # Kiểm tra tên novel đã tồn tại chưa
     def validate_title(self, value):
