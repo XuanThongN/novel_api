@@ -97,6 +97,15 @@ class ChapterViewSet(BaseViewSet):
             chapters = self.service_class().get_chapters_by_novel_id(novel_id)
             return Response(self.serializer_class(chapters, many=True, context={'request': request}).data)
         else:
+            return (Response({"error": "novel_id parameter is required"}, status=400))
+
+    @action(detail=False, methods=['get'])
+    def get_newest_chapters_by_novel_id(self, request):
+        novel_id = request.query_params.get('novel_id')
+        if novel_id is not None:
+            chapters = self.service_class().get_chapters_by_novel_id(novel_id).order_by('-id')[:4]
+            return Response(self.serializer_class(chapters, many=True, context={'request': request}).data)
+        else:
             return Response({"error": "novel_id parameter is required"}, status=400)
 
 
