@@ -85,6 +85,16 @@ class NovelViewSet(BaseViewSet):
         else:
             return Response({"error": "category_id parameter is required"}, status=400)
 
+    @action(detail=False, methods=['get'])
+    def get_relative_novels_by_category_id(self, request):
+        novel_id = request.query_params.get('novel_id')
+        category_id = request.query_params.get('category_id')
+        if novel_id is not None and category_id is not None:
+            novels = self.service_class().get_novel_by_category(category_id).exclude(id=novel_id).order_by('-id')[:4]
+            return Response(self.serializer_class(novels, many=True, context={'request': request}).data)
+        else:
+            return Response({"error": "novel_id and category_id are required"}, status=400)
+
 
 class ChapterViewSet(BaseViewSet):
     service_class = ChapterService

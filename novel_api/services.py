@@ -38,6 +38,9 @@ class NovelService(BaseService):
     def get_novel_with_category(self, category_id):
         return Novel.objects.filter(category_id=category_id)
 
+    def get_novel_by_category(self, category_id):
+        return Novel.objects.filter(category_id=category_id)
+
 
 class ChapterService(BaseService):
     def __init__(self):
