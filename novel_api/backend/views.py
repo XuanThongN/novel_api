@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 from django.contrib.auth.models import User, Group
+from django.db.models import Q
 from django.shortcuts import redirect
 from rest_framework import viewsets, permissions, generics, routers, status
 from rest_framework.decorators import action
@@ -10,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from novel_api.backend import serializers
-from novel_api.backend.models import Category
+from novel_api.backend.models import Category, Novel
 from novel_api.backend.serializers import (GroupSerializer, UserSerializer,
                                            NovelSerializer, ChapterSerializer,
                                            CommentSerializer, CategorySerializer)
@@ -74,6 +75,18 @@ class NovelViewSet(BaseViewSet):
                 novel.save()
                 #  xoá file với đường dẫn file_data
                 os.remove(file_data)
+
+    from django.db.models import Q
+
+    # inside NovelViewSet class
+    @action(detail=False, methods=['get'])
+    def search_novel(self, request):
+        search_string = request.query_params.get('search', None)
+        if search_string is not None:
+            novels = Novel.objects.filter(Q(title__icontains=search_string) | Q(description__icontains=search_string))
+            return Response(self.serializer_class(novels, many=True, context={'request': request}).data)
+        else:
+            return Response({"error": "search parameter is required"}, status=400)
 
     @action(detail=False, methods=['get'])
     def get_novel_with_category(self, request):
