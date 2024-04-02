@@ -32,12 +32,12 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
 # Novel
 class NovelSerializer(serializers.HyperlinkedModelSerializer):
     category = CategorySerializer()
-
-    # chapters = serializers.SerializerMethodField()
+    chapters_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Novel
-        fields = ['url', 'id', 'title', 'author', 'image_path', 'category', 'description', 'image_url']
+        fields = ['url', 'id', 'title', 'author', 'image_path', 'category', 'description', 'image_url',
+                  'chapters_count']
 
     # Kiểm tra tên novel đã tồn tại chưa
     def validate_title(self, value):
@@ -47,8 +47,8 @@ class NovelSerializer(serializers.HyperlinkedModelSerializer):
         return value
 
     # Lấy tất cả các chapter của novel
-    def get_chapters(self, obj):
-        return obj.chapters.all()
+    def get_chapters_count(self, obj):
+        return obj.chapters.count()
 
     # Lấy tất cả các comment của novel (chỉ lấy comment của novel đó)
     def get_comments(self, obj):
